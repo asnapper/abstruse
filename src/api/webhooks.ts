@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as basicAuth from 'express-basic-auth';
 import * as crypto from 'crypto';
 import { getConfigAsync, saveConfigAsync } from './setup';
 import {
@@ -11,7 +12,8 @@ import {
   createGitHubPullRequest,
   createGogsPullRequest,
   synchronizeGitHubPullRequest,
-  synchronizeGogsPullRequest
+  synchronizeGogsPullRequest,
+  pingAzureRepository
 } from './db/repository';
 import { startBuild } from './process-manager';
 import { writeJsonFile } from './fs';
@@ -466,6 +468,37 @@ webhooks.post('/gogs', (req: express.Request, res: express.Response) => {
           break;
       }
     });
+
+    
+});
+
+const authorizeRequest = (req: express.Request, res: express.Response, next: express.NextFunction) =>
+  getConfigAsync()
+    .then(config => basicAuth({ users: { [config.basicAuth.user]: config.basicAuth.password } }))
+    .then(auth => auth(req, res, next))
+    .catch(error => console.error(error) && res.status(500).json({ error }));
+
+webhooks.post(['/vsts', '/azure'], authorizeRequest, (req: express.Request, res: express.Response) => {
+  getConfigAsync()
+    .then(config => {
+      const { headers, body } = req;
+
+      config.url = (req.secure ? 'https://' : 'http://') + req.headers.host;
+
+      switch(body.eventType) {
+        case 'git.push':
+          return saveConfigAsync(config)
+            .then(() => pingAzureRepository(body))
+            .then(repo => startBuild({ data: body, start_time: new Date(), repositories_id: repo.id }))
+            .then(buildData => res.status(200).json({ msg: 'ok', data: buildData }))
+            .catch(error => console.error(error) && res.status(400).json({ error }));
+        break;
+      }
+
+      return res.status(404).json({ error: 'VSTS Support not yet implemented', headers, body });
+    });
+
+    
 });
 
 function verifyGithubWebhook(signature: string, payload: any, secret: string): boolean {

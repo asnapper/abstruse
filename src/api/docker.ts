@@ -293,8 +293,7 @@ export function isDockerRunning(): Observable<boolean> {
       .then(() => {
         observer.next(true);
         observer.complete();
-      })
-      .catch(() => {
+      }).catch(() => {
         observer.next(false);
         observer.complete();
       });

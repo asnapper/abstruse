@@ -22,13 +22,14 @@ export function create(): Promise<null> {
       t.string('bitbucket_client_id');
       t.string('bitbucket_oauth_key');
       t.string('bitbucket_oauth_secret');
-      t.enum('type', ['github', 'gitlab', 'bitbucket', 'gogs']);
+      t.enum('type', ['github', 'gitlab', 'bitbucket', 'gogs', 'azure']);
       t.integer('users_id').notNullable();
       t.foreign('users_id').references('users.id');
       t.timestamps();
     }))
     .then(() => schema.createTableIfNotExists('repositories', (t: knex.TableBuilder) => {
       t.increments('id').unsigned().primary();
+      t.integer('azure_id');
       t.integer('github_id');
       t.string('bitbucket_id');
       t.integer('gitlab_id');
@@ -40,7 +41,7 @@ export function create(): Promise<null> {
       t.string('full_name');
       t.string('description');
       t.string('api_url');
-      t.enum('repository_provider', ['github', 'gitlab', 'bitbucket', 'gogs']);
+      t.enum('repository_provider', ['github', 'gitlab', 'bitbucket', 'gogs', 'azure']);
       t.boolean('private').notNullable().defaultTo(false);
       t.boolean('fork');
       t.string('user_login');

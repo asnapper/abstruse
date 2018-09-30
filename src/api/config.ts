@@ -575,8 +575,9 @@ function checkBranches(branch: string, branches: { test: string[], ignore: strin
 }
 
 function spawnGit(args: string[]): Promise<void> {
+  console.log(args)
   return new Promise((resolve, reject) => {
-    let git = spawn('git', args, { detached: true });
+    let git = spawn('git', args, { detached: false });
 
     git.stdout.on('data', data => {
       data = data.toString();

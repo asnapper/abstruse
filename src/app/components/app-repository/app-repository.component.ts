@@ -85,7 +85,8 @@ export class AppRepositoryComponent implements OnInit, OnDestroy {
       { key: 'github', value: 'GitHub' },
       { key: 'gitlab', value: 'GitLab' },
       { key: 'bitbucket', value: 'BitBucket' },
-      { key: 'gogs', value: 'Gogs' }
+      { key: 'gogs', value: 'Gogs' },
+      { key: 'azure', value: 'Azure DevOps / VSTS' }
     ];
   }
 
