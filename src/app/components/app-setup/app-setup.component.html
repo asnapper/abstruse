@@ -65,6 +65,19 @@
                         <input class="form-input" type="text" name="jwt_secret" placeholder="JWT Secret" [(ngModel)]="secrets.jwt_secret" required minlength="7">
                         <p class="helper">JWT secret is used to encode and decode user passwords.</p>
                       </div>
+
+                      <div class="form-field">
+                        <label class="form-label">Basic Auth User</label>
+                        <input class="form-input" type="text" name="basic_auth_user" placeholder="User" [(ngModel)]="secrets.basic_auth_user" required minlength="1">
+                        <p class="helper">JWT secret is used to encode and decode user passwords.</p>
+                      </div>
+
+                      <div class="form-field">
+                        <label class="form-label">Basic Auth Password</label>
+                        <input class="form-input" type="text" name="basic_auth_password" placeholder="Password" [(ngModel)]="secrets.basic_auth_password" required minlength="1">
+                        <p class="helper">JWT secret is used to encode and decode user passwords.</p>
+                      </div>
+
                       <div class="form-field">
                         <button type="submit" class="button green" name="btn-continue" [disabled]="!secretsForm.valid">Continue</button>
                       </div>

@@ -408,6 +408,41 @@ export function pingGogsRepository(data: any): Promise<any> {
   });
 }
 
+
+export function pingAzureRepository(data: any): Promise<any> {
+  return new Promise((resolve, reject) => {
+    let saveData = generateAzureRepositoryData(data);
+    new Repository().where({ azure_id: saveData.azure_id }).fetch()
+      .then(repo => {
+        if (!repo) {
+          new Repository().save(saveData, { method: 'insert' })
+            .then(result => {
+              if (!result) {
+                reject(result);
+              } else {
+                let repository = result.toJSON();
+
+                return addRepositoryPermissionToEveryone(repository.id)
+                  .then(() => resolve(repository))
+                  .catch(err => reject(err));
+              }
+            })
+            .catch(err => reject(err));
+        } else {
+          repo.save(saveData, { method: 'update', require: false })
+            .then(result => {
+              if (!result) {
+                reject(result);
+              } else {
+                resolve(result.toJSON());
+              }
+            })
+            .catch(err => reject(err));
+        }
+      });
+  });
+}
+
 export function createGitHubPullRequest(data: any): Promise<any> {
   return new Promise((resolve, reject) => {
     let ghid = data.base ? data.base.repo.id : data.pull_request.base.repo.id;
@@ -689,3 +724,26 @@ function generateGogsRepositoryData(data: any): any {
     data: data
   };
 }
+
+function generateAzureRepositoryData(data: any): any {
+  // let url = new URL(data.resource.repository.url);
+  // let apiUrl = url.protocol + '//' + url.host;
+
+  const { id: azure_id, url: html_url, defaultBranch,
+    remoteUrl: clone_url, name } = data.resource.repository;
+
+  return { azure_id, clone_url, html_url, name,
+    default_branch: defaultBranch.replace('refs/heads/', ''),
+    full_name: 'full_name', // ?
+    description: 'data.repository.description', // ?
+    private: true, // ?
+    fork: false,  // ?
+    user_login: 'data.repository.owner.login', // ?
+    user_id:' data.repository.owner.id', // ?
+    user_avatar_url: 'data.repository.owner.avatar_url', // ?
+    repository_provider: 'azure',
+    api_url: 'https://no-fucking-idea-yet', // ?
+    data: data // ?
+  };
+}
+

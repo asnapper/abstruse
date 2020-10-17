@@ -418,10 +418,11 @@ export function startBuild(data: any, buildConfig?: any): Promise<any> {
 
   return getRepositoryOnly(data.repositories_id)
     .then(repository => {
-      let isGithub = repository.github_id ? true : false;
-      let isBitbucket = repository.bitbucket_id ? true : false;
-      let isGitlab = repository.gitlab_id  ? true : false;
-      let isGogs = repository.gogs_id ? true : false;
+      let isGithub = !!repository.github_id;
+      let isBitbucket = !!repository.bitbucket_id;
+      let isGitlab = !!repository.gitlab_id;
+      let isGogs = !!repository.gogs_id;
+      let isAzure = !!repository.azure_id;
 
       if (isGithub) {
         if (data.data.pull_request) {
@@ -451,6 +452,18 @@ export function startBuild(data: any, buildConfig?: any): Promise<any> {
         if (data.data.name) {
           sha = data.data.commit.id;
           branch = data.data.name;
+        }
+      } else if (isAzure) {
+        const { resource } = data.data;
+        
+        if (resource.pullRequestId) {
+          pr = resource.pullRequestId;
+          sha = resource.lastMergeCommit.commitId;
+          branch = resource.sourceRefName.replace('refs/heads/', '');
+        } else {
+          const [ ref ] = resource.refUpdates;
+          branch = ref.name.replace('refs/heads/', '');;
+          sha = ref.newObjectId;
         }
       }
 

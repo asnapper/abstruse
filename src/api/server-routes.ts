@@ -745,7 +745,11 @@ export function setupRoutes(): express.Router {
             .then(cfg => {
               cfg = Object.assign({}, cfg, {
                 secret: req.body.api_secret,
-                jwtSecret: req.body.jwt_secret
+                jwtSecret: req.body.jwt_secret,
+                basicAuth: {
+                  user: req.body.basic_auth_user,
+                  password: req.body.basic_auth_password
+                }
               });
 
               return saveConfigAsync(cfg);

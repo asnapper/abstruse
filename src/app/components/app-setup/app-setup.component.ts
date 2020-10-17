@@ -23,6 +23,8 @@ export interface User {
 export interface Secrets {
   api_secret: string;
   jwt_secret: string;
+  basic_auth_user?: string;
+  basic_auth_password?: string;
 }
 
 @Component({
@@ -91,6 +93,12 @@ export class AppSetupComponent implements OnInit {
     this.apiService.getSetupConfig().subscribe(resp => {
       this.secrets.api_secret = resp.secret;
       this.secrets.jwt_secret = resp.jwtSecret;
+
+      if (resp.basicAuth) {
+        this.secrets.basic_auth_user = resp.basicAuth.user;
+        this.secrets.basic_auth_password = resp.basicAuth.password;
+      }
+      
       this.loading = false;
       this.step = 'secrets';
     });

@@ -23,6 +23,10 @@ let defaultConfig = {
   privateKey: 'rsa.key',
   requireLogin: false,
   demo: false,
+  basicAuth: {
+    user: 'BillGates',
+    password: 'Micro$oft'
+  },
   db: {
     client: 'sqlite3',
     connection: {

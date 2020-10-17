@@ -98,6 +98,10 @@ export function sendPendingStatus(buildData: any, buildId: number): Promise<void
           let abstruseUrl = `${config.url}/build/${buildId}`;
 
           return setGitLabStatusPending(gitUrl, abstruseUrl, buildData.repository.access_token);
+        } else if (buildData.repository.azure_id) {
+          // TODO: what a mess
+
+          return; // setGitLabStatusPending(gitUrl, abstruseUrl, buildData.repository.access_token);
         } else {
           return Promise.resolve();
         }
@@ -426,3 +430,39 @@ function sendRequest(url: string, data: any, headers: any): Promise<any> {
     });
   });
 }
+
+// import { WebApi, getPersonalAccessTokenHandler } from 'azure-devops-node-api';
+// import { GitStatusState, GitStatus, IdentityRefWithVote } from 'azure-devops-node-api/interfaces/GitInterfaces';
+
+// enum BuildStatus {
+//   NotSet = 'NotSet',
+//   Pending = 'Pending',
+//   Succeeded = 'Succeeded',
+//   Failure = 'Failure',
+//   Error = 'Error'
+// }
+
+// async function updateAzureCommitStatus(commitId: string, repositoryId: string, url: string, state: GitStatusState, token: string) {
+//   const authHandler = getPersonalAccessTokenHandler(token);
+//   const azureApi = new WebApi(url, authHandler);
+//   const gitApi = await azureApi.getGitApi(url);
+
+
+//   const status: GitStatus = {
+//     _links: [],
+//     createdBy: 'abstruse',
+//     state,
+//     description: '',
+//     context: {
+//       name: 'abstruse',
+//       genre: 'continouus-integration'
+//     },
+//     //TODO: get server/job url somewhere
+//     targetUrl: "http://www.google.com"
+//   };
+
+//   gitApi.createCommitStatus(status, commitId, repositoryId)
+  
+//   gitApi.createCommitStatus(, commitId, repositoryId);
+  
+// }
