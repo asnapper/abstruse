@@ -84,7 +84,7 @@
     "@types/request": "^2.47.1",
     "@types/temp": "^0.8.32",
     "@types/uuid": "^3.4.3",
-    "ansi_up": "3.0.0",
+    "ansi_up": "5.0.0",
     "bookshelf": "^0.13.3",
     "bookshelf-json-columns": "^2.1.1",
     "bulma": "^0.7.1",
